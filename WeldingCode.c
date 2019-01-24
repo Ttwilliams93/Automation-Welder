@@ -23,6 +23,7 @@ int MotorStepDelayFWD = 125; //Step Delay in micros
 int MotorStepDelayBWD = 125;
 int LightThreshold = 130;
 int MaxStepDistance = 16000; //10 Steps per distance step, .00012" per step
+int MotorStepBackwardsCount = 5000;
 void setup() { //Runs once
   // Serial.begin(9600);
   pinMode(ResetPin, INPUT);
@@ -67,8 +68,8 @@ void loop() {
         MoveMotorBack();
       }
       if (LightSensorReading > LightThreshold) {
-        Serial.print(LightSensorReading);
-        Serial.println(" Sensor Reading");
+        //Serial.print(LightSensorReading);
+        //Serial.println("Sensor Reading");
         digitalWrite(LimitSwitchFakeSignal, HIGH);
         LimitSwitchStatus = LOW;
         digitalWrite(DirectionPin, HIGH);
@@ -94,7 +95,7 @@ void TakeStep(int MotorDelay) {
   }
 }
 void MoveMotorBack() {
-  while (StepCountBWD < StepCountFWD) {
+  while (StepCountBWD < MotorStepBackwardsCount) {
     CurrentTime = micros();
     TakeStep(MotorStepDelayBWD);
     StepCountBWD = StepCount;
