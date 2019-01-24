@@ -23,7 +23,7 @@ int MotorStepDelayFWD = 125; //Step Delay in micros
 int MotorStepDelayBWD = 125;
 int LightThreshold = 130;
 int MaxStepDistance = 16000; //10 Steps per distance step, .00012" per step
-int MotorStepBackwardsCount = 5000;
+int WeldDistanceReset = 5000;
 void setup() { //Runs once
   // Serial.begin(9600);
   pinMode(ResetPin, INPUT);
@@ -65,7 +65,7 @@ void loop() {
         digitalWrite(DirectionPin, HIGH);
         delay(10);
         StepCount = 0;
-        MoveMotorBack();
+        MoveMotorBack(StepCountFWD);
       }
       if (LightSensorReading > LightThreshold) {
         //Serial.print(LightSensorReading);
@@ -74,11 +74,11 @@ void loop() {
         LimitSwitchStatus = LOW;
         digitalWrite(DirectionPin, HIGH);
         StepCount = 0;
-        MoveMotorBack();
+        MoveMotorBack(WeldDistanceReset);
         // Serial.print(StepCountFWD);
         // Serial.println(" Steps FWD");
         // Serial.print(StepCountBWD);
-        //Serial.println(" Steps BWD");
+        // Serial.println(" Steps BWD");
       }
     }
     digitalWrite(LimitSwitchFakeSignal, LOW);
@@ -94,8 +94,8 @@ void TakeStep(int MotorDelay) {
     StepCount = StepCount + 1;
   }
 }
-void MoveMotorBack() {
-  while (StepCountBWD < MotorStepBackwardsCount) {
+void MoveMotorBack(int MoveDistance) {
+  while (StepCountBWD < MoveDistance) {
     CurrentTime = micros();
     TakeStep(MotorStepDelayBWD);
     StepCountBWD = StepCount;
